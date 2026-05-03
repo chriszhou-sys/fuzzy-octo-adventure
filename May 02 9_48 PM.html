@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RhythmWise -- Educational Music for All</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #4b2e83;
+      --purple-deep: #3a2266;
+      --purple-light: #ede8f5;
+      --gold: #b7a57a;
+      --gold-light: #f7f3ea;
+      --gold-bright: #e8c84a;
+      --white: #ffffff;
+      --off-white: #faf9f7;
+      --text: #1e1226;
+      --text-muted: #7a6e8a;
+      --border: rgba(75,46,131,0.12);
+      --border-hover: rgba(75,46,131,0.35);
+      --tag-econ-bg: #f7f3ea; --tag-econ-text: #7a5c1e;
+      --tag-bio-bg: #edf5f0;  --tag-bio-text: #1e5c3a;
+      --tag-cs-bg: #ede8f5;   --tag-cs-text: #4b2e83;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      background: var(--off-white);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--purple);
+      padding: 0;
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.25rem 2rem 2rem;
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      border-bottom: 1px solid rgba(183,165,122,0.35);
+    }
+
+    .site-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+
+    .site-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: var(--gold);
+      font-style: italic;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Nav strip ── */
+    .filters {
+      background: var(--purple);
+      border-bottom: 1px solid rgba(183,165,122,0.2);
+    }
+
+    .filters-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: 'Jost', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 14px 18px;
+      border: none;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .filter-btn:hover {
+      color: rgba(255,255,255,0.85);
+    }
+
+    .filter-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    /* ── Main content ── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    /* ── Subject section ── */
+    .subject-section {
+      padding-top: 2.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .subject-section.hidden { display: none; }
+
+    .subject-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 500;
+      font-style: italic;
+      color: var(--purple);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    /* ── Video grid ── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── Video card ── */
+    .video-card {
+      background: var(--white);
+      border: 0.5px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+
+    .video-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(75,46,131,0.08);
+    }
+
+    /* YouTube iframe wrapper — preserves 16:9 */
+    .video-thumb {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      background: var(--purple-light);
+      overflow: hidden;
+    }
+
+    .video-thumb iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .card-body {
+      padding: 10px 13px 13px;
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 3px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+    }
+
+    .subject-tag {
+      display: inline-block;
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 2px;
+      margin-top: 7px;
+    }
+
+    .tag-econ { background: var(--tag-econ-bg); color: var(--tag-econ-text); }
+    .tag-bio  { background: var(--tag-bio-bg);  color: var(--tag-bio-text); }
+    .tag-cs   { background: var(--tag-cs-bg);   color: var(--tag-cs-text); }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--purple);
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.25rem 2rem;
+      border-top: 1px solid rgba(183,165,122,0.15);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header-inner { padding: 1.5rem 1rem; }
+      .filters-inner { padding: 0 1rem; }
+      main { padding: 0 1rem 3rem; }
+      .video-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    }
+
+    @media (max-width: 400px) {
+      .video-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── About ── */
+    .about-section {
+      padding-top: 2.5rem;
+    }
+    .about-section.hidden { display: none; }
+    .about-intro {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-width: 580px;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .team-card {
+      background: var(--white);
+      border: 0.5px solid var(--border);
+      border-radius: 6px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .team-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: 0 4px 20px rgba(75,46,131,0.08);
+    }
+    .team-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--purple-light);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--purple);
+      border: 0.5px solid rgba(75,46,131,0.2);
+    }
+    .team-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px; font-weight: 500; color: var(--text);
+    }
+    .team-role {
+      font-size: 11px; font-weight: 300; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--gold); margin-top: -4px;
+    }
+    .team-bio {
+      font-size: 12px; font-weight: 300; color: var(--text-muted); line-height: 1.55;
+      border-top: 0.5px solid var(--border);
+      padding-top: 8px; margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="site-title">RhythmWise</span>
+      <span class="site-tagline">Educational Music for All</span>
+    </div>
+  </header>
+
+  <nav class="filters">
+    <div class="filters-inner">
+      <button class="filter-btn active" onclick="filter('all', this)">All</button>
+      <button class="filter-btn" onclick="filter('econ', this)">Economics</button>
+      <button class="filter-btn" onclick="filter('bio', this)">Biology</button>
+      <button class="filter-btn" onclick="filter('cs', this)">Computer Science</button>
+      <button class="filter-btn" onclick="filter('about', this)">About Us</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ══ ECONOMICS ══
+         To add a video: copy a .video-card block, change the YouTube ID in the
+         iframe src (the part after /embed/), and update the title/meta text.
+    -->
+    <section class="subject-section" data-subject="econ">
+      <div class="subject-label">Music</div>
+      <div class="video-grid">
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://youtu.be/MLmZbsWKKxo"
+              title="You Are My Sunshine Cover"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Supply &amp; Demand</div>
+            <div class="card-meta">Khan Academy</div>
+            <span class="subject-tag tag-econ">Econ</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/983pNbMVmYk"
+              title="What Is Inflation?"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">What Is Inflation?</div>
+            <div class="card-meta">TED-Ed</div>
+            <span class="subject-tag tag-econ">Econ</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/G0SpKB-DPpk"
+              title="How Does the Stock Market Work?"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">How Does the Stock Market Work?</div>
+            <div class="card-meta">TED-Ed</div>
+            <span class="subject-tag tag-econ">Econ</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ BIOLOGY ══ -->
+    <section class="subject-section" data-subject="bio">
+      <div class="subject-label">Biology</div>
+      <div class="video-grid">
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/L0k-enzoeOM"
+              title="Mitosis Song"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Mitosis Song</div>
+            <div class="card-meta">Crash Course</div>
+            <span class="subject-tag tag-bio">Biology</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/8kK2zwjRV0M"
+              title="DNA Structure and Replication"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">DNA Structure &amp; Replication</div>
+            <div class="card-meta">TED-Ed</div>
+            <span class="subject-tag tag-bio">Biology</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/2_fGKMPpWGs"
+              title="Photosynthesis"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Photosynthesis</div>
+            <div class="card-meta">Crash Course</div>
+            <span class="subject-tag tag-bio">Biology</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ══ COMPUTER SCIENCE ══ -->
+    <section class="subject-section" data-subject="cs">
+      <div class="subject-label">Computer Science</div>
+      <div class="video-grid">
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/1GSjbWt0c9M"
+              title="Binary Numbers"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Binary Numbers</div>
+            <div class="card-meta">CS Unplugged</div>
+            <span class="subject-tag tag-cs">CompSci</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/rL8X2mlNHPM"
+              title="What Is an Algorithm?"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">What Is an Algorithm?</div>
+            <div class="card-meta">TED-Ed</div>
+            <span class="subject-tag tag-cs">CompSci</span>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb">
+            <iframe src="https://www.youtube.com/embed/Dxcc6ycZ73M"
+              title="What Is the Internet?"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen loading="lazy"></iframe>
+          </div>
+          <div class="card-body">
+            <div class="card-title">What Is the Internet?</div>
+            <div class="card-meta">Code.org</div>
+            <span class="subject-tag tag-cs">CompSci</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ══ ABOUT US ══
+         Edit the four team members below:
+         - Change the two letters in .team-avatar to your initials
+         - Change "First Last" to your name
+         - Change "Your Role" to your role (e.g. "Content Creator", "Developer")
+         - Change the bio text to a short sentence about yourself
+    -->
+    <section class="about-section hidden" data-subject="about">
+      <div class="subject-label">About Us</div>
+      <!-- EDIT: Change this intro paragraph to describe your team/mission -->
+      <p class="about-intro">We're a team of four passionate about making learning fun. RhythmWise brings together music and education so students actually enjoy studying.</p>
+      <div class="team-grid">
+
+        <div class="team-card">
+          <div class="team-avatar">JY</div> <!-- EDIT: Change to your initials -->
+          <div class="team-name">Justin Yen</div> <!-- EDIT: Your name -->
+          <div class="team-role">Main Vocalist/Main Rapper/Educator/Life Coach</div> <!-- EDIT: e.g. "Content Creator" -->
+          <div class="team-bio">A short sentence about yourself and what you do for Tuniversity.</div> <!-- EDIT -->
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar">EY</div> <!-- EDIT -->
+          <div class="team-name">Ethan Yan</div> <!-- EDIT -->
+          <div class="team-role">Emotional Support</div> <!-- EDIT -->
+          <div class="team-bio">A short sentence about yourself and what you do for Tuniversity.</div> <!-- EDIT -->
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar">EF</div> <!-- EDIT -->
+          <div class="team-name">Chris Zhou</div> <!-- EDIT -->
+          <div class="team-role">Website Developer/Harmonica Guy/Tongue Virtuoso</div> <!-- EDIT -->
+          <div class="team-bio">For the prosperity of world education through funny music.</div> <!-- EDIT -->
+        </div>
+
+        <div class="team-card">
+          <div class="team-avatar">GH</div> <!-- EDIT -->
+          <div class="team-name">Michael Xiong</div> <!-- EDIT -->
+          <div class="team-role">Aspiring Educator/Ukulele Guy/Instruments Casanova</div> <!-- EDIT -->
+          <div class="team-bio">Rhythmwise Educator for amateur musicians.</div> <!-- EDIT -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="footer-inner">RhythmWise &middot; Educational music videos for curious kids</div>
+  </footer>
+
+  <script>
+    function filter(subject, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.subject-section, .about-section').forEach(s => {
+        const match = subject === 'all'
+          ? s.classList.contains('subject-section')
+          : s.dataset.subject === subject;
+        if (match) {
+          s.classList.remove('hidden');
+        } else {
+          s.classList.add('hidden');
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
